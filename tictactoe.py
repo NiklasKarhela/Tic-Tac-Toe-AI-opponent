@@ -5,6 +5,38 @@ def print_matrix():
     for lis in matrix:
         print(lis)
 
+def check_win():
+    #vågräta linjer
+    for n in range(3):
+        if all(element == matrix[n][0] for element in matrix[n]):
+            if matrix[n][0] == "X":
+                print("player won")
+            else:
+                print("Bot-Niklas won")
+                
+    #vågräta linjer
+    for n in range(3):
+        if matrix[0][n] == matrix[1][n] and matrix[2][n] == matrix[0][n]:
+            if matrix[0][n] == "X":
+                print("player won")
+            else:
+                print("Bot-Niklas won")
+    
+    #korsvis linjerna
+    if matrix[0][0] == matrix[1][1] and matrix[0][0]==matrix[2][2]:
+        if matrix[0][n] == "X":
+                print("player won")
+            else:
+                print("Bot-Niklas won")
+    if matrix[0][2] == matrix[1][1] and matrix[0][2]==matrix[2][0]:
+        if matrix[0][n] == "X":
+                print("player won")
+            else:
+                print("Bot-Niklas won")
+        
+            
+        
+
 def player_move():
     choise = input("Välj ruta (bokstav sedan nummer): ")
     
@@ -46,8 +78,9 @@ def player_move():
                     matrix[2].pop(int(choise[1]))
             
     print(print_matrix())
-
+rounds = 0
 while True:
+    rounds+=1
     print_matrix()
     player_move()
     break
