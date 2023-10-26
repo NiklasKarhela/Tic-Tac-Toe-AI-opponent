@@ -46,7 +46,11 @@ def check_win():
             return 1
     
     # Tittar om spelet har blivit jämt
-    if "" not in matrix:
+    l = 0
+    for x in range(3):
+        if "" in matrix[x]:
+            l +=1
+    if l == 0:
         return 0
         
 def player_move(rounds):
@@ -105,6 +109,8 @@ def bot_move(rounds):
             matrix[idx].pop(int(best_move[1]))
 
     #tittar om bot-niklas van
+    print(best_move)
+    print(best_score)
     if rounds >= 3:
         winner = check_win()
         if winner == 1:
@@ -120,14 +126,13 @@ def bot_move(rounds):
             print("Det blev jämt")
             exit()
             
-
 def minimax(is_maximizing, depth, best_score):
     #Titta om BOT niklas van
     check_win()
     score = check_win()
     if score != None:
         return score
-
+        
     if is_maximizing == True:
         for x in range(3):
             for z in range(3):
@@ -153,6 +158,7 @@ def minimax(is_maximizing, depth, best_score):
                     matrix[x].pop(z+1)
                     if score > best_score:
                         return score
+
 
 rounds = 0
 while rounds <= 9:
