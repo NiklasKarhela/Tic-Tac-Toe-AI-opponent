@@ -18,32 +18,32 @@ def check_taken(choise):
 def check_win():
     #vågräta linjer
     for n in range(3):
-        if all(element == matrix[n][0] for element in matrix[n]):
+        if matrix[n][0] == matrix[n][1] and matrix[n][0] == matrix[n][2]:
             if matrix[n][0] == "X":
-                return -1
+                return -10
             elif matrix[n][0] == "O":
-                return 1
+                return 10
                 
-    #vågräta linjer
+    #lodräta linjer
     for n in range(3):
         if matrix[0][n] == matrix[1][n] and matrix[2][n] == matrix[0][n]:
             if matrix[0][n] == "X":
-                return -1
-            elif matrix[n][0] == "O":
-                return 1
+                return -10
+            elif matrix[0][n] == "O":
+                return 10
     
     #korsvis linjerna
     if matrix[0][0] == matrix[1][1] and matrix[0][0]==matrix[2][2]:
         if matrix[0][0] == "X":
-            return -1
-        elif matrix[n][0] == "O":
-            return 1
+            return -10
+        elif matrix[0][0] == "O":
+            return 10
                 
     if matrix[0][2] == matrix[1][1] and matrix[0][2]==matrix[2][0]:
         if matrix[0][2] == "X":
-            return -1
-        elif matrix[n][0] == "O":
-            return 1
+            return -10
+        elif matrix[0][2] == "O":
+            return 10
     
     # Tittar om spelet har blivit jämt
     l = 0
@@ -77,13 +77,14 @@ def player_move(rounds):
                             else:
                                 matrix[2].insert(int(choise[1])-1, "X")
                                 matrix[2].pop(int(choise[1]))
+            print_matrix()
             if rounds >= 3:
                 winner = check_win()
-                if winner == 1:
+                if winner == 10:
                     print_matrix()
                     print("BOT-Niklas van")
                     exit()
-                elif winner == -1:
+                elif winner == -10:
                     print_matrix()
                     print("Spelaren van")
                     exit()
@@ -104,7 +105,6 @@ def bot_move(rounds):
     for x in range(3):
         for z in range(3):
             if matrix[x][z] == "": #Tittar om det rutan är ledig (forloopina går genom alla positioner)
-
                 matrix[x].insert(z, "O") #sätter in O på ett ställe som är ledigt och spelar genom spelet
                 matrix[x].pop(z+1) 
                 score = minimax(False, 0)
@@ -114,66 +114,80 @@ def bot_move(rounds):
                 
                 if score > best_score:
                     best_score = score
-                    best_move = letters[x] + str(z+1)
-                   
+                    best_move = letters[x] + str(z)
+                  
     best_move = list(best_move)
     for idx, letter in enumerate(letters):
         if letter == best_move[0]:
-            matrix[idx].insert(int(int(best_move[1])-1), "O")
-            matrix[idx].pop(int(best_move[1]))
+            matrix[idx].insert(int(best_move[1]), "O")
+            matrix[idx].pop(int(best_move[1])+1)
 
+    print("BOT-Niklas sätter i rutan: " + "".join(best_move[0]+str(int(best_move[1])+1)))
+    print_matrix()
     #tittar om bot-niklas van
     if rounds >= 3:
         winner = check_win()
-        if winner == 1:
-            print_matrix()
+        if winner == 10:
             print("BOT-Niklas van")
             exit()
-        elif winner == -1:
-            print_matrix()
+        elif winner == -10:
             print("Spelaren van")
             exit()
         elif winner == 0 :
-            print_matrix()
             print("Det blev jämt")
             exit()
             
 def minimax(is_maximizing, depth):
     #Tittar om bot van på någon av alla rundor bot niklas spelar.
     score = check_win()
-    if score == 1 or score == 0 or score == -1:
+    if score == 0 or score == 10 or score == -10:
         return score
     
-    if is_maximizing == True:
+    if is_maximizing == True :      
         best_score = -math.inf
-        for x in range(3):
-            for z in range(3):
+  
+        # Går genom alla rutor 
+        for x in range(3) :          
+            for z in range(3) : 
+               
+                # tittar om rutan är tom 
                 if matrix[x][z] == "": 
+                  
                     matrix[x].insert(z, "O") #sätter in O på ett ställe som är ledigt och spelar genom spelet
-                    matrix[x].pop(z+1) 
-                    score = minimax(False, depth +1)
+                    matrix[x].pop(z+1)
+  
+                    # Call minimax recursively and choose  
+                    # the maximum value  
+                    best_score = max( best_score, minimax(False, depth + 1)) 
+  
                     matrix[x].insert(z, "") #efter "lek" spelet ändrar den tillbaka rutan till den orginella
                     matrix[x].pop(z+1)
-                    return max(score, best_score)
-    else:
-        best_score = math.inf
+        return best_score 
+ 
+    else : 
+        best_score = math.inf 
+  
+        # Går genom alla rutor  
         for x in range(3):
             for z in range(3):
-                if matrix[x][z] == "": 
-                    
+               
+                # tittar om rutan är tom 
+                if matrix[x][z] == "" : 
                     matrix[x].insert(z, "X") #sätter in X på ett ställe som är ledigt och spelar genom spelet
-                    matrix[x].pop(z+1) 
-                    score = minimax(True, depth +1)
+                    matrix[x].pop(z+1)  
+                    best_score = min(best_score, minimax(True, depth + 1)) 
                     matrix[x].insert(z, "") #efter "lek" spelet ändrar den tillbaka rutan till den orginella
                     matrix[x].pop(z+1)
-                    return min(score, best_score)
+        return best_score
                         
-
-
+print_matrix()
 rounds = 0
-while rounds <= 9:
+while True:
     rounds+=1
-    print_matrix()
+
     player_move(rounds)
     bot_move(rounds)
+    
+
+    
     
