@@ -78,7 +78,19 @@ def player_move(rounds):
                                 matrix[2].insert(int(choise[1])-1, "X")
                                 matrix[2].pop(int(choise[1]))
             if rounds >= 3:
-                check_win()
+                winner = check_win()
+                if winner == 1:
+                    print_matrix()
+                    print("BOT-Niklas van")
+                    exit()
+                elif winner == -1:
+                    print_matrix()
+                    print("Spelaren van")
+                    exit()
+                elif winner == 0 :
+                    print_matrix()
+                    print("Det blev jämt")
+                    exit()
         else:
             print("Denna rutan är tagen! ")
             player_move(rounds)
@@ -91,17 +103,19 @@ def bot_move(rounds):
 
     for x in range(3):
         for z in range(3):
-            if matrix[x][z] == "": #Tittar om det rutan är ledig (forloopina före går genom alla positioner)
+            if matrix[x][z] == "": #Tittar om det rutan är ledig (forloopina går genom alla positioner)
 
                 matrix[x].insert(z, "O") #sätter in O på ett ställe som är ledigt och spelar genom spelet
                 matrix[x].pop(z+1) 
-                score = minimax(True, 0, best_score)
+                score = minimax(False, 0)
                 matrix[x].insert(z, "") #efter "lek" spelet ändrar den tillbaka rutan till den orginella
                 matrix[x].pop(z+1)
-
+                
+                
                 if score > best_score:
                     best_score = score
                     best_move = letters[x] + str(z+1)
+                   
     best_move = list(best_move)
     for idx, letter in enumerate(letters):
         if letter == best_move[0]:
@@ -109,8 +123,6 @@ def bot_move(rounds):
             matrix[idx].pop(int(best_move[1]))
 
     #tittar om bot-niklas van
-    print(best_move)
-    print(best_score)
     if rounds >= 3:
         winner = check_win()
         if winner == 1:
@@ -126,38 +138,36 @@ def bot_move(rounds):
             print("Det blev jämt")
             exit()
             
-def minimax(is_maximizing, depth, best_score):
-    #Titta om BOT niklas van
-    check_win()
+def minimax(is_maximizing, depth):
+    #Tittar om bot van på någon av alla rundor bot niklas spelar.
     score = check_win()
-    if score != None:
+    if score == 1 or score == 0 or score == -1:
         return score
-        
+    
     if is_maximizing == True:
+        best_score = -math.inf
         for x in range(3):
             for z in range(3):
-                if matrix[x][z] == "": #Tittar om det rutan är ledig
-
+                if matrix[x][z] == "": 
                     matrix[x].insert(z, "O") #sätter in O på ett ställe som är ledigt och spelar genom spelet
                     matrix[x].pop(z+1) 
-                    score = minimax(False, depth +1, best_score)
+                    score = minimax(False, depth +1)
                     matrix[x].insert(z, "") #efter "lek" spelet ändrar den tillbaka rutan till den orginella
                     matrix[x].pop(z+1)
-
-                    if score > best_score:
-                        return score
+                    return max(score, best_score)
     else:
+        best_score = math.inf
         for x in range(3):
             for z in range(3):
-                if matrix[x][z] == "": #Tittar om det rutan är ledig
-
-                    matrix[x].insert(z, "X") #sätter in O på ett ställe som är ledigt och spelar genom spelet
+                if matrix[x][z] == "": 
+                    
+                    matrix[x].insert(z, "X") #sätter in X på ett ställe som är ledigt och spelar genom spelet
                     matrix[x].pop(z+1) 
-                    score = minimax(True, depth +1, best_score)
+                    score = minimax(True, depth +1)
                     matrix[x].insert(z, "") #efter "lek" spelet ändrar den tillbaka rutan till den orginella
                     matrix[x].pop(z+1)
-                    if score > best_score:
-                        return score
+                    return min(score, best_score)
+                        
 
 
 rounds = 0
