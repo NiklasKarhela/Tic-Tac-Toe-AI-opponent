@@ -81,15 +81,12 @@ def player_move(rounds):
             if rounds >= 3:
                 winner = check_win()
                 if winner == 10:
-                    print_matrix()
                     print("BOT-Niklas van")
                     exit()
                 elif winner == -10:
-                    print_matrix()
                     print("Spelaren van")
                     exit()
                 elif winner == 0 :
-                    print_matrix()
                     print("Det blev jämt")
                     exit()
         else:
